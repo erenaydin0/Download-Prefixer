@@ -1,42 +1,89 @@
-// Popup JavaScript - URL Prefix Kuralları Yönetimi
+// Popup JavaScript - Download Prefixer
 console.log('🎯 Popup script loaded');
 
-// DOM Elements
-const rulesList = document.getElementById('rulesList');
-const domainInput = document.getElementById('domainInput');
-const prefixInput = document.getElementById('prefixInput');
-const addRuleBtn = document.getElementById('addRuleBtn');
-
-const exportRulesBtn = document.getElementById('exportRulesBtn');
-const importRulesBtn = document.getElementById('importRulesBtn');
-const importFileInput = document.getElementById('importFileInput');
-const statusMessage = document.getElementById('statusMessage');
-
-
+// DOM Elements - tanımlar DOMContentLoaded içinde yapılacak
+let pageList, pageAdd;
+let rulesList, addPrefixBtn, exportRulesBtn, importRulesBtn, importFileInput, statusMessage;
+let backBtn, domainInput, prefixInput, saveRuleBtn, cancelBtn;
 
 // Sayfa yüklendiğinde çalışır
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   console.log('🚀 Popup DOM loaded');
+
+  // DOM Elements - Pages
+  pageList = document.getElementById('pageList');
+  pageAdd = document.getElementById('pageAdd');
+
+  // DOM Elements - List Page
+  rulesList = document.getElementById('rulesList');
+  addPrefixBtn = document.getElementById('addPrefixBtn');
+  exportRulesBtn = document.getElementById('exportRulesBtn');
+  importRulesBtn = document.getElementById('importRulesBtn');
+  importFileInput = document.getElementById('importFileInput');
+  statusMessage = document.getElementById('statusMessage');
+
+  // DOM Elements - Add Page
+  backBtn = document.getElementById('backBtn');
+  domainInput = document.getElementById('domainInput');
+  prefixInput = document.getElementById('prefixInput');
+  saveRuleBtn = document.getElementById('saveRuleBtn');
+  cancelBtn = document.getElementById('cancelBtn');
+
   loadRules();
   setupEventListeners();
 });
 
 // Event listeners kurulumu
 function setupEventListeners() {
-  addRuleBtn.addEventListener('click', addNewRule);
+  // List page events
+  if (addPrefixBtn) addPrefixBtn.addEventListener('click', showAddPage);
+  if (exportRulesBtn) exportRulesBtn.addEventListener('click', exportRules);
+  if (importRulesBtn) importRulesBtn.addEventListener('click', triggerImport);
+  if (importFileInput) importFileInput.addEventListener('change', handleFileImport);
 
-  exportRulesBtn.addEventListener('click', exportRules);
-  importRulesBtn.addEventListener('click', triggerImport);
-  importFileInput.addEventListener('change', handleFileImport);
-  
+  // Add page events
+  if (backBtn) backBtn.addEventListener('click', showListPage);
+  if (cancelBtn) cancelBtn.addEventListener('click', showListPage);
+  if (saveRuleBtn) saveRuleBtn.addEventListener('click', addNewRule);
+
   // Enter tuşu ile kural ekleme
-  domainInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') addNewRule();
-  });
-  
-  prefixInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') addNewRule();
-  });
+  if (prefixInput) {
+    prefixInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') addNewRule();
+    });
+  }
+}
+
+// Sayfa Geçişleri
+async function showAddPage() {
+  // Aktif sekmenin URL'sini al
+  try {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab && tab.url) {
+      const url = new URL(tab.url);
+      domainInput.value = url.hostname;
+    }
+  } catch (error) {
+    console.error('Error getting active tab:', error);
+    domainInput.value = '';
+  }
+
+  // Sayfayı değiştir
+  pageList.classList.remove('active');
+  pageAdd.classList.add('active');
+
+  // Prefix input'a fokusla
+  prefixInput.value = '';
+  prefixInput.focus();
+}
+
+function showListPage() {
+  pageAdd.classList.remove('active');
+  pageList.classList.add('active');
+
+  // Formu temizle
+  domainInput.value = '';
+  prefixInput.value = '';
 }
 
 // Kuralları yükle ve görüntüle
@@ -44,7 +91,7 @@ async function loadRules() {
   try {
     const result = await chrome.storage.local.get(['urlPrefixRules']);
     const rules = result.urlPrefixRules || {};
-    
+
     console.log('📋 Loading rules:', rules);
     displayRules(rules);
   } catch (error) {
@@ -56,17 +103,17 @@ async function loadRules() {
 // Kuralları görüntüle
 function displayRules(rules) {
   rulesList.innerHTML = '';
-  
+
   if (Object.keys(rules).length === 0) {
     rulesList.innerHTML = `
       <div class="empty-state">
         <div class="icon">📭</div>
-        <p>Henüz kural eklenmemiş</p>
+        <p>Henüz prefix eklenmemiş</p>
       </div>
     `;
     return;
   }
-  
+
   Object.entries(rules).forEach(([domain, prefix]) => {
     const ruleElement = createRuleElement(domain, prefix);
     rulesList.appendChild(ruleElement);
@@ -77,8 +124,7 @@ function displayRules(rules) {
 function createRuleElement(domain, prefix) {
   const ruleDiv = document.createElement('div');
   ruleDiv.className = 'rule-item';
-  
-  // Domain bilgisini escape et ve data attribute kullan
+
   ruleDiv.innerHTML = `
     <div class="rule-info">
       <div class="rule-domain">${escapeHtml(domain)}</div>
@@ -88,14 +134,13 @@ function createRuleElement(domain, prefix) {
       <button class="btn-small btn-delete" data-domain="${escapeHtml(domain)}">Sil</button>
     </div>
   `;
-  
-  // Delete button event listener ekle
+
   const deleteBtn = ruleDiv.querySelector('.btn-delete');
-  deleteBtn.addEventListener('click', function() {
+  deleteBtn.addEventListener('click', function () {
     const domainToDelete = this.getAttribute('data-domain');
     deleteRule(domainToDelete);
   });
-  
+
   return ruleDiv;
 }
 
@@ -103,78 +148,73 @@ function createRuleElement(domain, prefix) {
 async function addNewRule() {
   const domain = domainInput.value.trim();
   const prefix = prefixInput.value.trim();
-  
+
   if (!domain || !prefix) {
     showStatus('Domain ve prefix alanları doldurulmalıdır', 'error');
     return;
   }
-  
-  // Domain formatını kontrol et
+
   if (!isValidDomain(domain)) {
     showStatus('Geçerli bir domain giriniz', 'error');
     return;
   }
-  
+
   try {
     const result = await chrome.storage.local.get(['urlPrefixRules']);
     const rules = result.urlPrefixRules || {};
-    
-    // Yeni kuralı ekle
+
     rules[domain] = prefix;
-    
-    // Storage'a kaydet
+
     await chrome.storage.local.set({ urlPrefixRules: rules });
-    
-    // Background script'e bildir
+
     chrome.runtime.sendMessage({
       action: 'updateRules',
       rules: rules
     });
-    
+
     console.log('✅ Rule added:', domain, '->', prefix);
-    showStatus(`Kural eklendi: ${domain} → ${prefix}`, 'success');
-    
-    // Formu temizle
-    domainInput.value = '';
-    prefixInput.value = '';
-    
+
+    // Ana sayfaya dön
+    showListPage();
+
     // Kuralları yeniden yükle
     loadRules();
-    
+
+    showStatus(`Prefix eklendi: ${domain} → ${prefix}`, 'success');
+
   } catch (error) {
     console.error('❌ Error adding rule:', error);
-    showStatus('Kural eklenirken hata oluştu', 'error');
+    showStatus('Prefix eklenirken hata oluştu', 'error');
   }
 }
 
 // Kural sil
 async function deleteRule(domain) {
-  if (!confirm(`"${domain}" kuralını silmek istediğinizden emin misiniz?`)) {
+  if (!confirm(`"${domain}" prefixini silmek istediğinizden emin misiniz?`)) {
     return;
   }
-  
+
   try {
     const result = await chrome.storage.local.get(['urlPrefixRules']);
     const rules = result.urlPrefixRules || {};
-    
+
     delete rules[domain];
-    
+
     await chrome.storage.local.set({ urlPrefixRules: rules });
-    
-    // Background script'e bildir
+
     chrome.runtime.sendMessage({
       action: 'updateRules',
       rules: rules
     });
-    
+
     console.log('🗑️ Rule deleted:', domain);
-    showStatus(`Kural silindi: ${domain}`, 'info');
-    
+    showStatus(`Prefix silindi: ${domain}`, 'info');
+
     loadRules();
-    
+
   } catch (error) {
     console.error('❌ Error deleting rule:', error);
-    showStatus('Kural silinirken hata oluştu', 'error');
+    showStatus('Prefix silinirken hata oluştu', 'error');
   }
 }
 
@@ -185,35 +225,32 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-
-
 // Kuralları dışa aktar
 async function exportRules() {
   try {
     const result = await chrome.storage.local.get(['urlPrefixRules']);
     const rules = result.urlPrefixRules || {};
-    
+
     const exportData = {
       exportDate: new Date().toISOString(),
-      version: '1.2',
+      version: '1.3',
       rules: rules
     };
-    
+
     const dataStr = JSON.stringify(exportData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
-    
-    // Download'u başlat
+
     const link = document.createElement('a');
     link.href = url;
-    link.download = `file-renamer-rules-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `download-prefixer-rules-${new Date().toISOString().split('T')[0]}.json`;
     link.click();
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log('📤 Rules exported');
     showStatus('Kurallar dışa aktarıldı', 'success');
-    
+
   } catch (error) {
     console.error('❌ Error exporting rules:', error);
     showStatus('Kurallar dışa aktarılırken hata oluştu', 'error');
@@ -229,85 +266,68 @@ function triggerImport() {
 async function handleFileImport(event) {
   const file = event.target.files[0];
   if (!file) return;
-  
-  // Dosya tipini kontrol et
+
   if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
     showStatus('Lütfen JSON formatında bir dosya seçin', 'error');
     return;
   }
-  
+
   try {
     const fileContent = await readFile(file);
     const importData = JSON.parse(fileContent);
-    
-    // Dosya formatını kontrol et
+
     if (!importData.rules || typeof importData.rules !== 'object') {
-      showStatus('Geçersiz dosya formatı. "rules" objesi bulunamadı', 'error');
+      showStatus('Geçersiz dosya formatı', 'error');
       return;
     }
-    
-    // Kuralları validate et
+
     const rules = importData.rules;
     const validRules = {};
     let validCount = 0;
     let invalidCount = 0;
-    
+
     for (const [domain, prefix] of Object.entries(rules)) {
-      if (typeof domain === 'string' && typeof prefix === 'string' && 
-          domain.trim() && prefix.trim() && isValidDomain(domain.trim())) {
+      if (typeof domain === 'string' && typeof prefix === 'string' &&
+        domain.trim() && prefix.trim() && isValidDomain(domain.trim())) {
         validRules[domain.trim()] = prefix.trim();
         validCount++;
       } else {
         invalidCount++;
-        console.warn('Invalid rule skipped:', domain, '->', prefix);
       }
     }
-    
+
     if (validCount === 0) {
-      showStatus('Dosyada geçerli kural bulunamadı', 'error');
+      showStatus('Dosyada geçerli prefix bulunamadı', 'error');
       return;
     }
-    
-    // Kullanıcıdan onay al
-    const confirmMessage = `${validCount} geçerli kural içe aktarılacak` + 
-                          (invalidCount > 0 ? ` (${invalidCount} geçersiz kural atlanacak)` : '') + 
-                          '. Mevcut kurallar silinecek. Devam etmek istiyor musunuz?';
-    
+
+    const confirmMessage = `${validCount} prefix içe aktarılacak. Devam?`;
+
     if (!confirm(confirmMessage)) {
       return;
     }
-    
-    // Storage'a kaydet
+
     await chrome.storage.local.set({ urlPrefixRules: validRules });
-    
-    // Background script'e bildir
+
     chrome.runtime.sendMessage({
       action: 'updateRules',
       rules: validRules
     });
-    
+
     console.log('📥 Rules imported:', validRules);
-    showStatus(`${validCount} kural başarıyla içe aktarıldı` + 
-              (invalidCount > 0 ? ` (${invalidCount} geçersiz atlandı)` : ''), 'success');
-    
-    // Kuralları yeniden yükle
+    showStatus(`${validCount} prefix içe aktarıldı`, 'success');
+
     loadRules();
-    
-    // File input'u temizle
     importFileInput.value = '';
-    
+
   } catch (error) {
     console.error('❌ Error importing rules:', error);
-    if (error instanceof SyntaxError) {
-      showStatus('Geçersiz JSON formatı', 'error');
-    } else {
-      showStatus('Dosya içe aktarılırken hata oluştu', 'error');
-    }
+    showStatus('Dosya içe aktarılırken hata oluştu', 'error');
     importFileInput.value = '';
   }
 }
 
-// Dosyayı oku (Promise tabanlı)
+// Dosyayı oku
 function readFile(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -325,12 +345,13 @@ function isValidDomain(domain) {
 
 // Status mesajı göster
 function showStatus(message, type = 'info') {
+  if (!statusMessage) return;
   statusMessage.textContent = message;
   statusMessage.className = `status-message ${type} show`;
-  
+
   setTimeout(() => {
     statusMessage.classList.remove('show');
   }, 3000);
 }
 
-console.log('✅ Popup script initialized'); 
+console.log('✅ Popup script initialized');

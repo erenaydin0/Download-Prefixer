@@ -1,44 +1,46 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download File Renamer</title>
+    <title>Download Prefixer</title>
     <link rel="stylesheet" href="popup.css">
 </head>
+
 <body>
     <div class="container">
-        <header>
-            <h1>Download File Renamer</h1>
-            <p>URL Kurallarını Yönet</p>
+        <!-- Sayfa 1: Prefix Listesi -->
+        <div id="pageList" class="page active">
+            <header>
+                <h1>Download Prefixer</h1>
+
+        </div>
         </header>
 
         <div class="rules-section">
-            <h2>Kurallar</h2>
+            <div class="actions">
+                <button id="exportRulesBtn" class="btn-icon" title="Dışa Aktar">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                </button>
+                <button id="importRulesBtn" class="btn-icon" title="İçe Aktar">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                </button>
+                <input type="file" id="importFileInput" accept=".json" style="display: none;">
+                <button id="addPrefixBtn" class="btn btn-primary btn-sm">+ Prefix Ekle</button>
+            </div>
             <div id="rulesList" class="rules-list">
                 <!-- Kurallar buraya dinamik olarak yüklenecek -->
-            </div>
-        </div>
-
-        <div class="add-rule-section">
-            <h2>Yeni Kural</h2>
-            <div class="form-group">
-                <label for="domainInput">Domain:</label>
-                <input type="text" id="domainInput" placeholder="örnek: github.com">
-            </div>
-            <div class="form-group">
-                <label for="prefixInput">Prefix:</label>
-                <input type="text" id="prefixInput" placeholder="örnek: github_">
-            </div>
-            <button id="addRuleBtn" class="btn btn-primary">Kural Ekle</button>
-        </div>
-
-        <div class="actions">
-
-            <button id="exportRulesBtn" class="btn btn-secondary">Dışa Aktar</button>
-            <div class="import-section">
-                <input type="file" id="importFileInput" accept=".json" style="display: none;">
-                <button id="importRulesBtn" class="btn btn-secondary">İçe Aktar</button>
             </div>
         </div>
 
@@ -47,10 +49,36 @@
         </div>
 
         <footer>
-            <p>v1.2</p>
+            <p>v1.3</p>
         </footer>
+    </div>
+
+    <!-- Sayfa 2: Prefix Ekleme -->
+    <div id="pageAdd" class="page">
+        <header>
+            <button id="backBtn" class="btn-back">←</button>
+            <h1>Yeni Prefix</h1>
+        </header>
+
+        <div class="add-rule-section">
+            <div class="form-group">
+                <label for="domainInput">Domain:</label>
+                <input type="text" id="domainInput" placeholder="örnek: github.com" readonly>
+            </div>
+            <div class="form-group">
+                <label for="prefixInput">Prefix:</label>
+                <input type="text" id="prefixInput" placeholder="örnek: github_" autofocus>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button id="saveRuleBtn" class="btn btn-primary">Kaydet</button>
+            <button id="cancelBtn" class="btn btn-secondary">İptal</button>
+        </div>
+    </div>
     </div>
 
     <script src="popup.js"></script>
 </body>
-</html> 
+
+</html>

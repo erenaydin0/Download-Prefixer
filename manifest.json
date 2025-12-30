@@ -1,25 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "Download File Renamer",
-  "version": "1.2",
-  "description": "İndirilen dosyaların adını URL'ye göre otomatik olarak değiştirir",
+  "name": "Download Prefixer",
+  "version": "1.3",
+  "description": "İndirilen dosyaların adına URL'ye göre otomatik prefix ekler",
   "permissions": [
     "downloads",
     "downloads.open",
-    "storage"
+    "storage",
+    "activeTab"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Download File Renamer",
+    "default_title": "Download Prefixer",
     "default_icon": "icon.png"
   },
   "icons": {
     "16": "icon.png",
-    "32": "icon.png", 
+    "32": "icon.png",
     "48": "icon.png",
     "128": "icon.png"
   }
-} 
+}
