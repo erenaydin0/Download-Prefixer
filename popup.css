@@ -1,0 +1,595 @@
+/* Notion-like Minimalist Premium Theme */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Notion Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f7f7f5;
+    --bg-hover: #f1f1ef;
+    
+    --text-primary: #37352f;
+    --text-secondary: #7c7b77;
+    --text-muted: #acaba9;
+    
+    --border-color: #edece9;
+    --border-color-focus: #2383e2;
+    
+    --accent-blue: #2383e2;
+    --accent-bg-light: #e6f4ff;
+    
+    /* Semantic Colors */
+    --success-color: #2eb553;
+    --success-bg: #eaf6ec;
+    --error-color: #eb5757;
+    --error-bg: #fdf2f2;
+    --warning-color: #df5b0a;
+    --warning-bg: #fbf3db;
+    
+    /* Transitions */
+    --transition-snappy: all 0.15s ease-in-out;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji";
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    width: 320px;
+    height: 380px;
+    background: var(--bg-primary);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Base Pages */
+.page {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.page.active {
+    display: flex;
+}
+
+/* Header & Brand */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    color: var(--text-primary);
+}
+
+header h1 {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.2px;
+}
+
+.version-badge {
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--border-color);
+}
+
+/* Back Button */
+.btn-back {
+    background: transparent;
+    border: none;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    transition: var(--transition-snappy);
+}
+
+.btn-back:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* Actions Section */
+.rules-section {
+    padding: 12px 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.action-buttons-left {
+    display: flex;
+    gap: 4px;
+}
+
+/* Circular/Rounded Icon Buttons */
+.btn-icon {
+    width: 28px;
+    height: 28px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-snappy);
+}
+
+.btn-icon:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+/* Rules List Container */
+.rules-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+/* Rule Card (Notion Row Style) */
+.rule-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background: transparent;
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--transition-snappy);
+}
+
+.rule-item:last-child {
+    border-bottom: none;
+}
+
+.rule-item:hover {
+    background: var(--bg-secondary);
+}
+
+.rule-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.rule-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+
+.rule-domain {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 12.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rule-match-badge {
+    font-size: 9px;
+    font-weight: 500;
+    padding: 1px 4px;
+    border-radius: 3px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    flex-shrink: 0;
+}
+
+.rule-ext-badge {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 1px 4px;
+    border-radius: 3px;
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #ffedd5;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    flex-shrink: 0;
+}
+
+.rule-prefix {
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-family: 'SF Mono', 'Monaco', 'Menlo', monospace;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.rule-actions {
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+/* Subtle Card Actions button */
+.btn-small {
+    padding: 4px 8px;
+    font-size: 11px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: var(--transition-snappy);
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.btn-small:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.btn-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+}
+
+.btn-delete:hover {
+    background: var(--error-bg);
+    color: var(--error-color);
+}
+
+/* Form Styles & Groups */
+.add-rule-section {
+    padding: 14px 14px 4px;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 6px 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--text-primary);
+    transition: var(--transition-snappy);
+}
+
+.form-group input[readonly] {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border-style: solid;
+    cursor: not-allowed;
+}
+
+.form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(35, 131, 226, 0.2);
+    background: #ffffff;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 6px 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--text-primary);
+    transition: var(--transition-snappy);
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237c7b77' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    padding-right: 30px;
+}
+
+.form-group select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(35, 131, 226, 0.2);
+    background-color: #ffffff;
+}
+
+/* Notion-like Multi-Select Tag Helper Box */
+.form-helper {
+    margin-top: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 10px;
+    background: #ffffff;
+}
+
+.helper-title {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    letter-spacing: 0.2px;
+}
+
+.helper-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.helper-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: var(--transition-snappy);
+}
+
+/* Notion Pastel Colors for Tags */
+.helper-tag[title*="Tarih"] {
+    background: #f5f3ff;
+    color: #6d28d9;
+}
+.helper-tag[title*="Tarih"]:hover {
+    background: #ede9fe;
+}
+
+.helper-tag[title*="Saat"] {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+.helper-tag[title*="Saat"]:hover {
+    background: #dbeafe;
+}
+
+.helper-tag[title*="Domain"] {
+    background: #f3f4f6;
+    color: #374151;
+}
+.helper-tag[title*="Domain"]:hover {
+    background: #e5e7eb;
+}
+
+.helper-tag[title*="Yıl"] {
+    background: #f0fdf4;
+    color: #15803d;
+}
+.helper-tag[title*="Yıl"]:hover {
+    background: #dcfce7;
+}
+
+.helper-tag[title*="Ay"] {
+    background: #fff7ed;
+    color: #c2410c;
+}
+.helper-tag[title*="Ay"]:hover {
+    background: #ffedd5;
+}
+
+.helper-tag[title*="Gün"] {
+    background: #fdf2f8;
+    color: #be185d;
+}
+.helper-tag[title*="Gün"]:hover {
+    background: #fce7f3;
+}
+
+.helper-tag[title*="Zaman Damgası"] {
+    background: #fefce8;
+    color: #a16207;
+}
+.helper-tag[title*="Zaman Damgası"]:hover {
+    background: #fef9c3;
+}
+
+.helper-tag:active {
+    transform: scale(0.96);
+}
+
+/* Buttons System */
+.btn {
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: var(--transition-snappy);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: var(--accent-blue);
+    color: white;
+    border-color: transparent;
+}
+
+.btn-primary:hover {
+    background: #1a6fc2;
+}
+
+.btn-secondary {
+    background: #ffffff;
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-hover);
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.form-actions {
+    padding: 6px 14px 14px;
+    display: flex;
+    gap: 6px;
+}
+
+.form-actions .btn {
+    flex: 1;
+}
+
+/* Status Notifications (Toast) */
+.status {
+    padding: 0 14px 8px;
+    min-height: 32px;
+}
+
+.status-message {
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(2px);
+    transition: var(--transition-snappy);
+    border: 1px solid transparent;
+}
+
+.status-message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.status-message.success {
+    background: var(--success-bg);
+    color: var(--success-color);
+    border-color: rgba(46, 181, 83, 0.15);
+}
+
+.status-message.error {
+    background: var(--error-bg);
+    color: var(--error-color);
+    border-color: rgba(235, 87, 87, 0.15);
+}
+
+.status-message.info {
+    background: var(--warning-bg);
+    color: var(--warning-color);
+    border-color: rgba(223, 91, 10, 0.15);
+}
+
+/* Footer Section */
+footer {
+    padding: 10px 14px;
+    text-align: center;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 10.5px;
+}
+
+/* Scrollbar styling */
+.rules-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.rules-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.rules-list::-webkit-scrollbar-thumb {
+    background: #e3e2e0;
+    border-radius: 3px;
+}
+
+.rules-list::-webkit-scrollbar-thumb:hover {
+    background: #c1c0bd;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 32px 12px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.empty-state .icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+    opacity: 0.5;
+}
+
+/* Active clicks */
+.btn:active,
+.btn-icon:active {
+    transform: scale(0.97);
+}
